@@ -1,30 +1,43 @@
 # Mini Port Scanner
 
-Um port scanner simples em Python.
+Port scanner simples em Python com CLI.
 
-## Uso
-py scanner.py -i <IP> [-p porta_inicial-porta_final] [-t timeout] [-o arquivo]
+## Uso rapido
 
-Exemplo:
-py scanner.py -i scanme.nmap.org -p 20-80 -t 2 -o resultado.txt
+Dentro da pasta `portscanner`:
 
-Da raiz do projeto, tambem funciona:
-py -m portscanner.scanner -i scanme.nmap.org -p 20-80 -t 2 -o portscanner/results/resultado.txt
+```bash
+py scanner.py -i <IP_OU_HOST> [-p inicio-fim] [-t timeout] [-o arquivo]
+```
 
-portscanner/
-│── scanner.py              # Script principal (CLI com argparse + colorama)
-│── requirements.txt        # Dependências (colorama, etc.)
-│── README.md               # Explicação de uso
-│
-├── core/                   # Lógica principal
-│   ├── __init__.py
-│   ├── scanner.py          # Funções de scan (connect_ex, threading)
-│   ├── utils.py            # Funções auxiliares (salvar resultados)
-│   └── services.py         # Banner grabbing (captura de serviços)
-│
-├── results/                # Saída dos scans
-│   └── resultado_scan.txt
-│
-└── tests/                  # Testes unitários
-    ├── __init__.py
-    └── test_scanner.py
+Da raiz do projeto:
+
+```bash
+py -m portscanner.scanner -i <IP_OU_HOST> [-p inicio-fim] [-t timeout] [-o arquivo]
+```
+
+## Parametros
+
+- `-i`, `--ip`: alvo do scan (obrigatorio)
+- `-p`, `--ports`: intervalo no formato `inicio-fim` (padrao `1-1024`)
+- `-t`, `--timeout`: timeout em segundos (padrao `1`)
+- `-o`, `--output`: caminho do arquivo de saida
+
+## Exemplos
+
+```bash
+# localhost, portas 1-30
+py -m portscanner.scanner -i 127.0.0.1 -p 1-30
+
+# localhost com timeout maior e arquivo de saida
+py -m portscanner.scanner -i 127.0.0.1 -p 1-1024 -t 5 -o portscanner/results/resultado_timeout5.txt
+
+# alvo de treino controlado
+py -m portscanner.scanner -i scanme.nmap.org -p 20-80 -t 2
+```
+
+## Observacoes
+
+- O entrypoint do projeto e `scanner.py` (ou `py -m portscanner.scanner` na raiz).
+- A opcao `-n` nao e reconhecida neste CLI.
+- Para escanear portas, use sempre `-p` no formato `inicio-fim`.

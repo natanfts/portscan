@@ -1,0 +1,30 @@
+
+import time
+import argparse
+from core.scanner import scan_ports
+from core.utils import log_monitor
+from colorama import Fore, init
+
+def monitor(ip, port, interval=60, timeout=1):
+    init(autoreset=True)
+    print(Fore.CYAN + f"Monitorando {ip}:{port} a cada {interval} segundos...\n")
+    while True:
+        open_ports = scan_ports(ip, port, port, timeout=timeout)
+        if port in open_ports:
+            status = "ABERTA"
+            print(Fore.GREEN + f"[OK] Porta {port} está aberta em {ip}")
+        else:
+            status = "FECHADA"
+            print(Fore.RED + f"[ALERTA] Porta {port} está FECHADA em {ip}")
+        log_monitor(ip, port, status)
+        time.sleep(interval)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Monitor automático de porta")
+    parser.add_argument("-i", "--ip", required=True, help="IP ou hostname alvo")
+    parser.add_argument("-p", "--port", type=int, required=True, help="Porta a monitorar")
+    parser.add_argument("-t", "--timeout", type=int, default=1, help="Timeout em segundos")
+    parser.add_argument("-n", "--interval", type=int, default=60, help="Intervalo entre checagens (segundos)")
+    args = parser.parse_args()
+
+    monitor(args.ip, args.port, args.interval, args.timeout)

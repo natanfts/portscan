@@ -1,3 +1,2 @@
-Portas abertas em 127.0.0.1:
-135 | Não foi possível capturar banner
-445 | Não foi possível capturar banner
+Portas abertas em parceiros.ifood.com.br:
+80 | Não foi possível capturar banner
