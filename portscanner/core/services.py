@@ -1,18 +1,18 @@
- #Banner grabbing para identificar serviços.
+# Banner grabbing para identificar serviços.
+
+COMMON_SERVICES = {
+    22: "SSH",
+    80: "HTTP",
+    443: "HTTPS",
+    3306: "MySQL",
+    21: "FTP",
+    25: "SMTP",
+    110: "POP3",
+    143: "IMAP",
+    53: "DNS",
+
+}
 
 
-import socket
-
-def grab_banner(target_ip, port, timeout=2):
-    try:
-        sock = socket.socket()
-        sock.settimeout(timeout)
-        sock.connect((target_ip, port))
-        banner = sock.recv(1024).decode(errors="ignore").strip()
-        sock.close()
-        if banner:
-            return banner
-        else:
-            return "Sem banner identificado"
-    except Exception:
-        return "Não foi possível capturar banner"
+def identify_service(port):
+    return COMMON_SERVICES.get(port, "Desconhecido")

@@ -1,2 +1,10 @@
-Portas abertas em parceiros.ifood.com.br:
-80 | Não foi possível capturar banner
+=== Relatorio Final ===
+
+Data/Hora: 2026-05-13T21:22:17
+Alvo: scanme.nmap.org
+Tipo de Scan: fast
+Total de portas abertas: 2
+
+Portas abertas:
+- 22 (SSH) - open - SSH aberto â†’ possÃ­vel acesso remoto Linux
+- 80 (HTTP) - open - HTTP aberto â†’ servidor web detectado

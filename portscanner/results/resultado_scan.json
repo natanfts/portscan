@@ -1,0 +1,26 @@
+{
+    "target": "scanme.nmap.org",
+    "scan_type": "fast",
+    "timestamp": "2026-05-13T21:22:17",
+    "open_ports": [
+        {
+            "label": "Risco",
+            "icon": "⚠️",
+            "tone": "risk",
+            "port": 22,
+            "service": "SSH",
+            "status": "open",
+            "analysis": "SSH aberto → possível acesso remoto Linux"
+        },
+        {
+            "label": "Atencao",
+            "icon": "🌐",
+            "tone": "attention",
+            "port": 80,
+            "service": "HTTP",
+            "status": "open",
+            "analysis": "HTTP aberto → servidor web detectado"
+        }
+    ],
+    "total_open_ports": 2
+}

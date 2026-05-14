@@ -1,0 +1,39 @@
+[
+    {
+        "timestamp": "2026-05-13T21:05:59",
+        "target": "127.0.0.1",
+        "open_ports": [
+            3306
+        ]
+    },
+    {
+        "timestamp": "2026-05-13T21:10:30",
+        "target": "scanme.nmap.org",
+        "open_ports": [
+            22,
+            80
+        ]
+    },
+    {
+        "timestamp": "2026-05-13T21:12:46",
+        "target": "127.0.0.1",
+        "open_ports": [
+            3306
+        ]
+    },
+    {
+        "timestamp": "2026-05-13T21:15:59",
+        "target": "127.0.0.1",
+        "open_ports": [
+            3306
+        ]
+    },
+    {
+        "timestamp": "2026-05-13T21:22:17",
+        "target": "scanme.nmap.org",
+        "open_ports": [
+            22,
+            80
+        ]
+    }
+]
