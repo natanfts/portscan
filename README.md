@@ -1,6 +1,8 @@
-# Portscan
+# Net Scan (Portscan)
 
 Script em Python para localizar portas abertas em um alvo, com menu interativo e barra de progresso.
+
+O dashboard web agora usa a marca Net Scan, com paleta visual cyber (fundo escuro com tons neon verde/ciano) e suporte a logo no cabecalho.
 
 Este e o README principal do projeto. Aqui fica a documentacao geral: instalacao, estrutura, execucao via CLI e dashboard web, testes e funcionamento dos relatorios.
 
@@ -32,7 +34,7 @@ portscanner/
 Na raiz do projeto:
 
 ```bash
-py -m pip install -r portscanner/requirements.txt
+python -m pip install -r portscanner/requirements.txt
 ```
 
 ## Ambiente virtual (.venv)
@@ -40,7 +42,7 @@ py -m pip install -r portscanner/requirements.txt
 Criar (se ainda nao existir):
 
 ```bash
-py -m venv .venv
+python -m venv .venv
 ```
 
 Ativar no PowerShell:
@@ -68,13 +70,13 @@ deactivate
 Da raiz do projeto:
 
 ```bash
-py -m portscanner.scanner -i 127.0.0.1
+python -m portscanner.scanner -i 127.0.0.1
 ```
 
 De dentro da pasta portscanner:
 
 ```bash
-py scanner.py -i 127.0.0.1
+python scanner.py -i 127.0.0.1
 ```
 
 ### Via Web Dashboard
@@ -82,15 +84,21 @@ py scanner.py -i 127.0.0.1
 Na raiz do projeto:
 
 ```bash
-py app.py
+python app.py
 ```
 
 Depois acesse no navegador: `http://127.0.0.1:5000`
 
+### Identidade visual do dashboard
+
+- Nome exibido: Net Scan
+- Logo no cabecalho: `static/img/netscan-logo.png`
+- Caso a logo nao exista, o titulo continua aparecendo normalmente.
+
 No dashboard web, cada porta recebe um status visual:
 
 - ⚠️ Risco: portas com maior exposicao
-- 🌐 Atencao: servicos que exigem revisao
+- 🌐 Atenção: servicos que exigem revisao
 - ✅ OK: exposicao considerada menor
 
 Ao executar via CLI, o programa abre um menu:
@@ -119,13 +127,13 @@ Observacao: no fluxo atual, a escolha do menu define o tipo de scan. O parametro
 
 ```bash
 # inicia e permite escolher no menu
-py -m portscanner.scanner -i 127.0.0.1
+python -m portscanner.scanner -i 127.0.0.1
 
 # scan rapido com --fast
-py -m portscanner.scanner -i 127.0.0.1 --fast
+python -m portscanner.scanner -i 127.0.0.1 --fast
 
 # scan personalizado (escolha opcao 3 no menu)
-py -m portscanner.scanner -i scanme.nmap.org -p 20-80
+python -m portscanner.scanner -i scanme.nmap.org -p 20-80
 ```
 
 ## Saida
@@ -193,3 +201,4 @@ Porta    Servico      Status   Analise
 - monitor.py nao existe neste projeto; o ponto de entrada e portscanner/scanner.py.
 - A opcao -n nao faz parte do CLI.
 - Para scan personalizado, use -p no formato inicio-fim (exemplo: -p 1-30).
+- Projeto padronizado para usar apenas o ambiente virtual `.venv`.

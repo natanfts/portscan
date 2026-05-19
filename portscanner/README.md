@@ -9,13 +9,13 @@ Este README e uma referencia rapida do pacote `portscanner` e do uso do CLI. Par
 Dentro da pasta portscanner:
 
 ```bash
-py scanner.py -i <IP_OU_HOST> [-p inicio-fim] [--fast]
+python scanner.py -i <IP_OU_HOST> [-p inicio-fim] [--fast]
 ```
 
 Da raiz do projeto:
 
 ```bash
-py -m portscanner.scanner -i <IP_OU_HOST> [-p inicio-fim] [--fast]
+python -m portscanner.scanner -i <IP_OU_HOST> [-p inicio-fim] [--fast]
 ```
 
 Com `--fast`, o scan rapido inicia direto (sem passar pelo menu).
@@ -31,7 +31,7 @@ Depois da escolha do tipo de scan, o programa pergunta o formato do relatorio:
 Na raiz do projeto:
 
 ```bash
-py -m venv .venv
+python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 ```
 
@@ -59,13 +59,13 @@ Ao iniciar, o programa mostra:
 
 ```bash
 # menu interativo
-py -m portscanner.scanner -i 127.0.0.1
+python -m portscanner.scanner -i 127.0.0.1
 
 # scan rapido
-py -m portscanner.scanner -i 127.0.0.1 --fast
+python -m portscanner.scanner -i 127.0.0.1 --fast
 
 # scan personalizado (selecione opcao 3 no menu)
-py -m portscanner.scanner -i scanme.nmap.org -p 20-80
+python -m portscanner.scanner -i scanme.nmap.org -p 20-80
 ```
 
 ## Saida
@@ -83,7 +83,7 @@ Cada relatorio inclui data/hora do scan, alvo escaneado, tipo de scan, portas ab
 O dashboard web tambem mostra um historico de scans com data/hora, alvo e portas abertas, alem de status visuais por risco:
 
 - ⚠️ Risco
-- 🌐 Atencao
+- 🌐 Atenção
 - ✅ OK
 
 Ha um botao "Limpar historico" no dashboard para remover todos os registros salvos.
@@ -101,6 +101,7 @@ python -m unittest discover -s portscanner/tests -v
 
 ## Observacoes
 
-- O entrypoint do projeto e scanner.py (ou py -m portscanner.scanner na raiz).
+- O entrypoint do projeto e scanner.py (ou python -m portscanner.scanner na raiz).
 - A opcao -n nao e reconhecida neste CLI.
 - Para scan personalizado, use -p no formato inicio-fim.
+- Projeto padronizado para usar apenas o ambiente virtual `.venv`.

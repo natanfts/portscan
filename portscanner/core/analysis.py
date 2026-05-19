@@ -14,7 +14,7 @@ RISK_LEVELS = {
 
 RISK_META = {
     "Alto": {"label": "Risco", "icon": "⚠️", "tone": "risk"},
-    "Médio": {"label": "Atencao", "icon": "🌐", "tone": "attention"},
+    "Médio": {"label": "Atenção", "icon": "🌐", "tone": "attention"},
     "Baixo": {"label": "OK", "icon": "✅", "tone": "safe"},
 }
 

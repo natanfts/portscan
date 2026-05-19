@@ -3,58 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Port Scanner Dashboard</title>
+    <title>Net Scan</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        /*
+         * Paleta cyber: fundo escuro + ciano/verde neon
+         */
+
+        :root {
+            --bg-deep: #020b12;
+            --bg-mid: #061622;
+            --panel: #071b28;
+            --panel-soft: #0b2231;
+            --line: #164256;
+            --line-strong: #22d3a3;
+            --neon: #46fcb7;
+            --neon-soft: #7fffd4;
+            --text-main: #d9fff1;
+            --text-muted: #84c5b0;
+        }
+
+        /* === RESET & BASE === */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(70,252,183,0.08) 0%, transparent 35%),
+                radial-gradient(circle at 80% 0%, rgba(34,211,163,0.08) 0%, transparent 35%),
+                linear-gradient(155deg, var(--bg-deep) 0%, var(--bg-mid) 55%, #03101a 100%);
             min-height: 100vh;
             padding: 20px;
         }
-        .container { 
-            max-width: 1200px; 
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            background: linear-gradient(160deg, rgba(7,27,40,0.96) 0%, rgba(7,31,44,0.96) 100%);
+            border-radius: 14px;
+            border: 1px solid rgba(34,211,163,0.3);
+            box-shadow: 0 20px 56px rgba(0,0,0,0.55), 0 0 32px rgba(34,211,163,0.14);
             padding: 40px;
+            position: relative;
         }
-        h1 { 
-            color: #333; 
+        .brand-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
             margin-bottom: 30px;
+        }
+        .brand-logo {
+            width: 68px;
+            height: 68px;
+            object-fit: contain;
+            border-radius: 12px;
+            border: 1px solid rgba(70,252,183,0.55);
+            box-shadow: 0 0 16px rgba(70,252,183,0.25);
+            background: rgba(3,14,20,0.8);
+            padding: 4px;
+        }
+        h1 {
+            color: var(--neon-soft);
             text-align: center;
             font-size: 2.5em;
+            margin-bottom: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            text-shadow: 0 0 12px rgba(70,252,183,0.35);
         }
+
+        /* === PORTAS RÁPIDAS === */
+        .quick-ports {
+            background: linear-gradient(180deg, rgba(9,36,49,0.9) 0%, rgba(9,30,43,0.92) 100%);
+            border: 1px solid rgba(34,211,163,0.35);
+            border-radius: 12px;
+            padding: 24px 22px 18px;
+            margin-bottom: 28px;
+            box-shadow: 0 8px 22px rgba(0,0,0,0.35);
+        }
+        .quick-ports h2 {
+            color: var(--text-main);
+            font-size: 1.4em;
+            margin-bottom: 10px;
+        }
+        .quick-ports p {
+            color: var(--text-muted);
+            font-size: 1em;
+            line-height: 1.5;
+            margin-bottom: 18px;
+        }
+        .quick-port-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+        }
+        .quick-port-card {
+            width: 100%;
+            margin-top: 0;
+            padding: 0;
+            min-height: 56px;
+            background: rgba(4,20,30,0.9);
+            color: var(--text-main);
+            border: 1px solid rgba(42,107,132,0.8);
+            border-radius: 10px;
+            box-shadow: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            cursor: pointer;
+            transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+        }
+        .quick-port-card:hover:not(:disabled) {
+            transform: translateY(-2px);
+            border-color: var(--neon);
+            box-shadow: 0 10px 20px rgba(70,252,183,0.15);
+        }
+        .quick-port-number {
+            color: var(--neon);
+            font-size: 1em;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .quick-port-label {
+            color: var(--text-muted);
+            font-size: 0.84em;
+            line-height: 1.1;
+        }
+
+        /* === FORM === */
         .form-section {
-            background: #f8f9fa;
+            background: linear-gradient(180deg, rgba(6,24,36,0.95) 0%, rgba(8,29,43,0.95) 100%);
             padding: 30px;
             border-radius: 8px;
             margin-bottom: 30px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid var(--line-strong);
         }
-        .form-group {
-            margin-bottom: 15px;
-        }
+        .form-group { margin-bottom: 15px; }
         label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: #333;
+            color: var(--neon-soft);
         }
-        input[type="text"], input[type="number"], select {
+        input[type="text"] {
             width: 100%;
             padding: 12px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--line);
             border-radius: 6px;
             font-size: 1em;
+            color: var(--text-main);
+            background: rgba(3,14,20,0.9);
             transition: border-color 0.3s;
         }
-        input[type="text"]:focus, select:focus {
+        input[type="text"]:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: var(--line-strong);
+            box-shadow: 0 0 0 3px rgba(34,211,163,0.18);
         }
         .form-row {
             display: grid;
@@ -67,38 +172,93 @@
             gap: 10px;
             margin-top: 15px;
         }
-        input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-        }
+        input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; accent-color: var(--line-strong); }
+
+        /* === BUTTON === */
         button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: linear-gradient(135deg, #0d8f79 0%, #22d3a3 100%);
+            color: #032018;
             padding: 14px 40px;
             border: none;
             border-radius: 6px;
             font-size: 1.1em;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
             margin-top: 20px;
             width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
-        button:hover {
+        button:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 10px 24px rgba(34,211,163,0.36);
         }
-        button:active {
-            transform: translateY(0);
-        }
-        .results-section {
-            margin-top: 40px;
+        button:active:not(:disabled) { transform: translateY(0); }
+        button:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        /* === SPINNER (botão) === */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.4);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
             display: none;
+            flex-shrink: 0;
         }
-        .results-section.active {
-            display: block;
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* === OVERLAY DE CARREGAMENTO === */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,6,10,0.78);
+            z-index: 999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
         }
+        .loading-overlay.active { display: flex; }
+        .loading-overlay .spinner-lg {
+            width: 56px;
+            height: 56px;
+            border: 6px solid rgba(70,252,183,0.22);
+            border-top-color: var(--neon);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        .loading-overlay p { color: white; font-size: 1.2em; font-weight: 600; }
+        .loading-steps { color: rgba(127,255,212,0.85); font-size: 0.95em; }
+
+        /* === MENSAGENS === */
+        .error {
+            background: #fff0f0;
+            color: #b91c1c;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #ef4444;
+            margin-bottom: 20px;
+        }
+        .success {
+            background: #f0fdf4;
+            color: #166534;
+            padding: 14px 16px;
+            border-radius: 8px;
+            border-left: 4px solid #22c55e;
+            margin-bottom: 14px;
+            font-weight: 600;
+        }
+
+        /* === RESULTADOS === */
+        .results-section { margin-top: 40px; display: none; }
+        .results-section.active { display: block; }
+
         .info-box {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -106,54 +266,120 @@
             margin-bottom: 30px;
         }
         .info-item {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: linear-gradient(135deg, rgba(4,20,30,0.9) 0%, rgba(7,35,48,0.92) 100%);
+            color: var(--text-main);
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 10px;
             text-align: center;
+            border-top: 3px solid var(--line-strong);
         }
-        .info-item label {
-            color: rgba(255,255,255,0.8);
-            margin-bottom: 5px;
-            font-size: 0.9em;
+        .info-item label { color: var(--text-muted); margin-bottom: 5px; font-size: 0.9em; }
+        .info-item strong { display: block; font-size: 1.8em; margin-top: 10px; color: var(--neon-soft); }
+
+        /* === CARTÕES DE RISCO === */
+        .risk-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
         }
-        .info-item strong {
-            display: block;
-            font-size: 1.8em;
-            margin-top: 10px;
+        .risk-card {
+            border-radius: 10px;
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
         }
-        .error {
-            background: #fee;
-            color: #c33;
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 4px solid #c33;
-            margin-bottom: 20px;
+        .risk-card.risk       { background: rgba(47,14,24,0.9); border-left: 4px solid #ff5b86; }
+        .risk-card.attention  { background: rgba(59,44,14,0.9); border-left: 4px solid #ffc76b; }
+        .risk-card.safe       { background: rgba(8,51,39,0.88); border-left: 4px solid #46fcb7; }
+        .risk-card-icon { font-size: 2em; line-height: 1; }
+        .risk-card-info strong { display: block; font-size: 1.6em; line-height: 1; }
+        .risk-card.risk      .risk-card-info strong { color: #ff7aa0; }
+        .risk-card.attention .risk-card-info strong { color: #ffdca4; }
+        .risk-card.safe      .risk-card-info strong { color: #7fffd4; }
+        .risk-card-info span { font-size: 0.85em; color: var(--text-muted); }
+
+        /* === RESUMO DO SCAN === */
+        .scan-summary {
+            background: rgba(6,26,38,0.85);
+            border-radius: 10px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            line-height: 1.8;
+            border-left: 3px solid var(--line-strong);
+            color: #d7fff2;
         }
-        table { 
+        .scan-summary strong { color: var(--text-main); }
+
+        /* === BARRA DE FILTROS === */
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            min-width: 140px;
+        }
+        .filter-bar label { font-size: 0.82em; color: var(--text-muted); margin-bottom: 0; font-weight: 600; }
+        .filter-bar input,
+        .filter-bar select {
+            padding: 9px 12px;
+            border: 2px solid var(--line);
+            border-radius: 6px;
+            font-size: 0.92em;
+            background: rgba(3,14,20,0.9);
+            color: var(--text-main);
+            transition: border-color 0.2s;
+        }
+        .filter-bar input:focus,
+        .filter-bar select:focus { outline: none; border-color: var(--line-strong); box-shadow: 0 0 0 2px rgba(34,211,163,0.18); }
+        .btn-clear-filters {
+            background: rgba(11,41,54,0.95);
+            color: var(--neon-soft);
+            padding: 9px 16px;
+            margin-top: 0;
+            width: auto;
+            font-size: 0.88em;
+            align-self: flex-end;
+        }
+        .btn-clear-filters:hover:not(:disabled) { background: rgba(17,58,75,0.96); transform: none; box-shadow: none; }
+        .filter-count {
+            font-size: 0.85em;
+            color: var(--text-muted);
+            align-self: flex-end;
+            padding-bottom: 10px;
+            white-space: nowrap;
+        }
+
+        /* === TABELA === */
+        .table-wrapper { overflow-x: auto; border-radius: 8px; }
+        table {
             width: 100%;
-            border-collapse: collapse; 
-            margin-top: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-collapse: collapse;
+            margin-top: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.35);
             border-radius: 8px;
             overflow: hidden;
+            min-width: 480px;
         }
-        th, td { 
-            border: 1px solid #ddd; 
-            padding: 15px; 
-            text-align: left;
-        }
-        th { 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        th, td { border: 1px solid rgba(24,66,86,0.9); padding: 15px; text-align: left; }
+        th {
+            background: linear-gradient(135deg, #052130 0%, #0c3f4e 100%);
+            color: var(--text-main);
             font-weight: 600;
         }
-        tr:nth-child(even) { 
-            background: #f8f9fa; 
-        }
-        tr:hover {
-            background: #f0f0f0;
-        }
+        td { color: var(--text-main); }
+        tr:nth-child(even) { background: rgba(7,35,48,0.7); }
+        tr:hover { background: rgba(10,48,66,0.75); }
+        tr.hidden-row { display: none; }
+
         .status-pill {
             display: inline-flex;
             align-items: center;
@@ -163,245 +389,526 @@
             font-weight: 700;
             font-size: 0.92em;
         }
-        .status-pill.risk {
-            background: #fdecea;
-            color: #c0392b;
-        }
-        .status-pill.attention {
-            background: #fff3e0;
-            color: #e67e22;
-        }
-        .status-pill.safe {
-            background: #eafaf1;
-            color: #1e8449;
-        }
-        .analysis-text {
+        .status-pill.risk       { background: rgba(255,91,134,0.18); color: #ff8db0; }
+        .status-pill.attention  { background: rgba(255,199,107,0.18); color: #ffdca4; }
+        .status-pill.safe       { background: rgba(70,252,183,0.16); color: #8affd8; }
+        .analysis-text { font-size: 0.95em; color: #9ce3cc; }
+        #results-no-match {
+            display: none;
+            text-align: center;
+            color: var(--text-muted);
+            padding: 24px;
             font-size: 0.95em;
-            color: #555;
         }
-        .scan-summary {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px 24px;
-            margin-bottom: 24px;
-            line-height: 1.8;
+
+        /* === GRÁFICO === */
+        canvas { margin-top: 40px; max-height: 400px; }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(6,26,38,0.85);
+            border-radius: 8px;
+            border: 1px solid rgba(24,66,86,0.9);
         }
-        .scan-summary strong {
-            color: #1f2d3d;
-        }
+
+        /* === HISTÓRICO === */
         .history-section {
             margin-top: 40px;
             padding-top: 20px;
-            border-top: 1px solid #e6e6e6;
+            border-top: 2px solid rgba(34,211,163,0.3);
         }
-        .history-section h2 {
-            font-size: 1.5em;
-            color: #2d3436;
-            margin-bottom: 16px;
-        }
+        .history-section h2 { font-size: 1.5em; color: var(--text-main); margin-bottom: 16px; }
         .history-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 16px;
             margin-bottom: 12px;
+            flex-wrap: wrap;
         }
-        .clear-history-form {
-            margin: 0;
+        .history-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
         }
-        .clear-history-btn {
-            width: auto;
-            margin-top: 0;
-            padding: 10px 14px;
+        .history-search {
+            padding: 9px 14px;
+            border: 2px solid var(--line);
+            border-radius: 6px;
             font-size: 0.92em;
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            min-width: 200px;
+            color: var(--text-main);
+            background: rgba(3,14,20,0.9);
+            transition: border-color 0.2s;
+        }
+        .history-search:focus { outline: none; border-color: var(--line-strong); box-shadow: 0 0 0 2px rgba(34,211,163,0.18); }
+        .clear-history-form { margin: 0; }
+        .clear-history-btn {
+            width: auto; margin-top: 0; padding: 10px 14px;
+            font-size: 0.92em;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             box-shadow: none;
         }
-        .clear-history-btn:hover {
-            box-shadow: 0 8px 16px rgba(192, 57, 43, 0.25);
+        .clear-history-btn:hover:not(:disabled) {
+            box-shadow: 0 8px 16px rgba(239,68,68,0.3);
+            transform: translateY(-1px);
         }
-        .success {
-            background: #eafaf1;
-            color: #1e8449;
-            padding: 14px 16px;
-            border-radius: 8px;
-            border-left: 4px solid #1e8449;
-            margin-bottom: 14px;
-            font-weight: 600;
+        .btn-export {
+            width: auto; margin-top: 0; padding: 9px 14px;
+            font-size: 0.88em;
+            background: linear-gradient(135deg, #0d8f79 0%, #22d3a3 100%);
+            box-shadow: none;
         }
-        .history-empty {
-            color: #7f8c8d;
-            background: #f8f9fa;
-            padding: 18px;
-            border-radius: 8px;
+        .btn-export:hover:not(:disabled) {
+            box-shadow: 0 6px 14px rgba(34,211,163,0.35);
+            transform: translateY(-1px);
         }
-        canvas { 
-            margin-top: 40px;
-            max-height: 400px;
+        .history-empty { color: var(--text-muted); background: rgba(6,26,38,0.85); padding: 18px; border-radius: 8px; }
+
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 768px) {
+            .container { padding: 20px 16px; }
+            .brand-header { flex-direction: column; gap: 10px; }
+            .brand-logo { width: 56px; height: 56px; }
+            h1 { font-size: 1.6em; }
+            .form-row { grid-template-columns: 1fr; gap: 0; }
+            .info-box { grid-template-columns: 1fr 1fr; gap: 12px; }
+            .info-item strong { font-size: 1.2em; }
+            .risk-cards { grid-template-columns: 1fr; gap: 10px; }
+            .filter-bar { flex-direction: column; gap: 8px; }
+            .filter-group { min-width: 100%; }
+            .btn-clear-filters { width: 100%; }
+            .history-header { flex-direction: column; align-items: flex-start; }
+            .history-actions { width: 100%; }
+            .history-search { width: 100%; min-width: unset; }
+            .btn-export, .clear-history-btn { flex: 1; }
         }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            margin-top: 40px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 8px;
+        @media (max-width: 480px) {
+            .info-box { grid-template-columns: 1fr; }
         }
-        .no-results {
-            text-align: center;
-            color: #999;
-            padding: 40px;
-            font-size: 1.1em;
-        }
+
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🔍 Port Scanner Dashboard</h1>
-        
-        <form method="POST" class="form-section">
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="ip">IP ou Hostname</label>
-                    <input type="text" id="ip" name="ip" placeholder="Ex: 192.168.0.1 ou scanme.nmap.org" required>
-                </div>
-                <div class="form-group">
-                    <label for="port_range">Intervalo de Portas</label>
-                    <input type="text" id="port_range" name="port_range" placeholder="Ex: 20-80 (opcional)">
-                </div>
-            </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="fast" name="fast" checked>
-                <label for="fast" style="margin: 0;">Scan Rápido (portas comuns)</label>
-            </div>
-            <button type="submit">Iniciar Scan</button>
-        </form>
 
-        {% if data.error %}
-        <div class="error">
-            <strong>Erro:</strong> {{ data.error }}
+<!-- Overlay de carregamento -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner-lg"></div>
+    <p>Executando scan...</p>
+    <div class="loading-steps" id="loadingStep">Resolvendo hostname e conectando...</div>
+</div>
+
+<div class="container">
+    <div class="brand-header">
+        <img class="brand-logo" src="{{ url_for('static', filename='img/netscan-logo.png') }}" alt="Logo Net Scan" onerror="this.style.display='none'">
+        <h1>Net Scan</h1>
+    </div>
+
+    <section class="quick-ports" aria-labelledby="quickPortsTitle">
+        <h2 id="quickPortsTitle">Portas dos Principais Protocolos de Rede</h2>
+        <p>Clique em uma porta ou protocolo para testar rapidamente. Cada protocolo serve para diferentes tipos de serviços de rede.</p>
+        <div class="quick-port-grid">
+            <button type="button" class="quick-port-card" onclick="setQuickPort(21)"><span class="quick-port-number">21</span><span class="quick-port-label">FTP</span></button>
+            <button type="button" class="quick-port-card" onclick="setQuickPort(22)"><span class="quick-port-number">22</span><span class="quick-port-label">SSH</span></button>
+            <button type="button" class="quick-port-card" onclick="setQuickPort(23)"><span class="quick-port-number">23</span><span class="quick-port-label">Telnet</span></button>
+            <button type="button" class="quick-port-card" onclick="setQuickPort(25)"><span class="quick-port-number">25</span><span class="quick-port-label">SMTP</span></button>
+            <button type="button" class="quick-port-card" onclick="setQuickPort(53)"><span class="quick-port-number">53</span><span class="quick-port-label">DNS</span></button>
+            <button type="button" class="quick-port-card" onclick="setQuickPort(80)"><span class="quick-port-number">80</span><span class="quick-port-label">HTTP</span></button>
+            <button type="button" class="quick-port-card" onclick="setQuickPort(110)"><span class="quick-port-number">110</span><span class="quick-port-label">POP3</span></button>
+            <button type="button" class="quick-port-card" onclick="setQuickPort(115)"><span class="quick-port-number">115</span><span class="quick-port-label">SFTP</span></button>
+            <button type="button" class="quick-port-card" onclick="setQuickPort(143)"><span class="quick-port-number">143</span><span class="quick-port-label">IMAP4</span></button>
+            <button type="button" class="quick-port-card" onclick="setQuickPort(156)"><span class="quick-port-number">156</span><span class="quick-port-label">SQL</span></button>
+            <button type="button" class="quick-port-card" onclick="setQuickPort(443)"><span class="quick-port-number">443</span><span class="quick-port-label">HTTPS</span></button>
+            <button type="button" class="quick-port-card" onclick="setQuickPort(465)"><span class="quick-port-number">465</span><span class="quick-port-label">SMTP SSL</span></button>
+            <button type="button" class="quick-port-card" onclick="setQuickPort(587)"><span class="quick-port-number">587</span><span class="quick-port-label">SMTP Sub</span></button>
+            <button type="button" class="quick-port-card" onclick="setQuickPort(993)"><span class="quick-port-number">993</span><span class="quick-port-label">IMAP SSL</span></button>
+            <button type="button" class="quick-port-card" onclick="setQuickPort(995)"><span class="quick-port-number">995</span><span class="quick-port-label">POP3 SSL</span></button>
+            <button type="button" class="quick-port-card" onclick="setQuickPort(1433)"><span class="quick-port-number">1433</span><span class="quick-port-label">MSSQL</span></button>
+            <button type="button" class="quick-port-card" onclick="setQuickPort(3306)"><span class="quick-port-number">3306</span><span class="quick-port-label">MySQL</span></button>
+            <button type="button" class="quick-port-card" onclick="setQuickPort(5432)"><span class="quick-port-number">5432</span><span class="quick-port-label">PostgreSQL</span></button>
+            <button type="button" class="quick-port-card" onclick="setQuickPort(3389)"><span class="quick-port-number">3389</span><span class="quick-port-label">RDP</span></button>
+            <button type="button" class="quick-port-card" onclick="setQuickPort(445)"><span class="quick-port-number">445</span><span class="quick-port-label">SMB</span></button>
+            <button type="button" class="quick-port-card" onclick="setQuickPort(5900)"><span class="quick-port-number">5900</span><span class="quick-port-label">VNC</span></button>
+            <button type="button" class="quick-port-card" onclick="setQuickPort(5060)"><span class="quick-port-number">5060</span><span class="quick-port-label">SIP</span></button>
+            <button type="button" class="quick-port-card" onclick="setQuickPort(5061)"><span class="quick-port-number">5061</span><span class="quick-port-label">SIP TLS</span></button>
+            <button type="button" class="quick-port-card" onclick="setQuickPort(25565)"><span class="quick-port-number">25565</span><span class="quick-port-label">Minecraft</span></button>
         </div>
-        {% elif data.open_ports %}
-        <div class="results-section active">
-            <div class="info-box">
-                <div class="info-item">
-                    <label>Alvo</label>
-                    <strong>{{ data.target }}</strong>
-                </div>
-                <div class="info-item">
-                    <label>Tipo de Scan</label>
-                    <strong>{{ data.scan_type }}</strong>
-                </div>
-                <div class="info-item">
-                    <label>Portas Abertas</label>
-                    <strong>{{ data.total_open_ports }}</strong>
-                </div>
-                <div class="info-item">
-                    <label>Data/Hora</label>
-                    <strong style="font-size: 1.15em;">{{ data.timestamp }}</strong>
+    </section>
+
+    <form method="POST" class="form-section" id="scanForm">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="ip">IP ou Hostname</label>
+                <input type="text" id="ip" name="ip"
+                       placeholder="Ex: 192.168.0.1 ou scanme.nmap.org" required>
+            </div>
+            <div class="form-group">
+                <label for="port_range">Intervalo de Portas</label>
+                <input type="text" id="port_range" name="port_range"
+                       placeholder="Ex: 20-80 (opcional)">
+            </div>
+        </div>
+        <div class="checkbox-group">
+            <input type="checkbox" id="fast" name="fast" checked>
+            <label for="fast" style="margin: 0;">Scan Rápido (portas comuns)</label>
+        </div>
+        <button type="submit" id="scanBtn">
+            <span class="spinner" id="btnSpinner"></span>
+            <span id="btnText">Iniciar Scan</span>
+        </button>
+    </form>
+
+    {% if data.error %}
+    <div class="error">
+        <strong>Erro:</strong> {{ data.error }}
+    </div>
+    {% elif data.open_ports %}
+    <div class="results-section active">
+
+        <!-- Cartões de info -->
+        <div class="info-box">
+            <div class="info-item">
+                <label>Alvo</label>
+                <strong style="font-size:1.05em;">{{ data.target }}</strong>
+            </div>
+            <div class="info-item">
+                <label>Tipo de Scan</label>
+                <strong>{{ data.scan_type }}</strong>
+            </div>
+            <div class="info-item">
+                <label>Portas Abertas</label>
+                <strong>{{ data.total_open_ports }}</strong>
+            </div>
+            <div class="info-item">
+                <label>Data/Hora</label>
+                <strong style="font-size:0.95em;">{{ data.timestamp }}</strong>
+            </div>
+        </div>
+
+        <!-- Cartões de risco -->
+        {% set risk_count = data.open_ports | selectattr('tone','eq','risk')       | list | length %}
+        {% set attn_count = data.open_ports | selectattr('tone','eq','attention')  | list | length %}
+        {% set safe_count = data.open_ports | selectattr('tone','eq','safe')       | list | length %}
+        <div class="risk-cards">
+            <div class="risk-card risk">
+                <div class="risk-card-icon">⚠️</div>
+                <div class="risk-card-info">
+                    <strong>{{ risk_count }}</strong>
+                    <span>Portas de alto risco</span>
                 </div>
             </div>
-
-            <div class="scan-summary">
-                <div><strong>Relatorio de Scan</strong></div>
-                <div><strong>Data/Hora:</strong> {{ data.timestamp }}</div>
-                <div><strong>Alvo:</strong> {{ data.target }}</div>
-                <div><strong>Portas abertas:</strong> {{ data.open_ports | map(attribute='port') | list }}</div>
+            <div class="risk-card attention">
+                <div class="risk-card-icon">🌐</div>
+                <div class="risk-card-info">
+                    <strong>{{ attn_count }}</strong>
+                    <span>Portas com atenção</span>
+                </div>
             </div>
+            <div class="risk-card safe">
+                <div class="risk-card-icon">✅</div>
+                <div class="risk-card-info">
+                    <strong>{{ safe_count }}</strong>
+                    <span>Portas seguras</span>
+                </div>
+            </div>
+        </div>
 
-            <table>
-                <tr>
-                    <th>Porta</th>
-                    <th>Serviço</th>
-                    <th>Análise</th>
-                    <th>Status</th>
-                </tr>
-                {% for port in data.open_ports %}
-                <tr>
-                    <td><strong>{{ port.port }}</strong></td>
-                    <td>{{ port.service }}</td>
-                    <td><span class="analysis-text">{{ port.analysis }}</span></td>
-                    <td>
-                        <span class="status-pill {{ port.tone }}">
-                            <span>{{ port.icon }}</span>
-                            <span>{{ port.label }}</span>
-                        </span>
-                    </td>
-                </tr>
-                {% endfor %}
+        <!-- Resumo -->
+        <div class="scan-summary">
+            <div><strong>Relatório de Scan</strong></div>
+            <div><strong>Data/Hora:</strong> {{ data.timestamp }}</div>
+            <div><strong>Alvo:</strong> {{ data.target }}</div>
+            <div><strong>Portas abertas:</strong> {{ data.open_ports | map(attribute='port') | list }}</div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="filter-bar">
+            <div class="filter-group">
+                <label for="filterPort">🔢 Porta</label>
+                <input type="text" id="filterPort" placeholder="Ex: 80" oninput="filterResults()">
+            </div>
+            <div class="filter-group">
+                <label for="filterService">🔧 Serviço</label>
+                <input type="text" id="filterService" placeholder="Ex: SSH" oninput="filterResults()">
+            </div>
+            <div class="filter-group">
+                <label for="filterRisk">🎯 Risco</label>
+                <select id="filterRisk" onchange="filterResults()">
+                    <option value="">Todos</option>
+                    <option value="risk">⚠️ Alto risco</option>
+                    <option value="attention">🌐 Atenção</option>
+                    <option value="safe">✅ Seguro</option>
+                </select>
+            </div>
+            <button type="button" class="btn-clear-filters" onclick="clearFilters()">✕ Limpar</button>
+            <span class="filter-count" id="filterCount"></span>
+        </div>
+
+        <!-- Tabela de resultados -->
+        <div class="table-wrapper">
+            <table id="resultsTable">
+                <thead>
+                    <tr>
+                        <th>Porta</th>
+                        <th>Serviço</th>
+                        <th>Análise</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsBody">
+                    {% for port in data.open_ports %}
+                    <tr data-port="{{ port.port }}"
+                        data-service="{{ port.service | lower }}"
+                        data-tone="{{ port.tone }}">
+                        <td><strong>{{ port.port }}</strong></td>
+                        <td>{{ port.service }}</td>
+                        <td><span class="analysis-text">{{ port.analysis }}</span></td>
+                        <td>
+                            <span class="status-pill {{ port.tone }}">
+                                <span>{{ port.icon }}</span>
+                                <span>{{ port.label }}</span>
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
             </table>
+        </div>
+        <div id="results-no-match">Nenhuma porta encontrada com esses filtros.</div>
 
-            <!-- Gráfico -->
-            <div class="chart-container">
-                <canvas id="portsChart" width="400" height="200"></canvas>
-            </div>
-            <script id="ports-data" type="application/json">{{ data.open_ports | tojson }}</script>
-            <script>
-                const ctx = document.getElementById('portsChart').getContext('2d');
-                const ports = JSON.parse(document.getElementById('ports-data').textContent);
-                const labels = ports.map(p => p.port + " (" + p.service + ")");
-                const values = ports.map(p => 1); // cada porta aberta conta como 1
+        <!-- Gráfico -->
+        <div class="chart-container">
+            <canvas id="portsChart" width="400" height="200"></canvas>
+        </div>
+        <script id="ports-data" type="application/json">{{ data.open_ports | tojson }}</script>
+        <script>
+            (function () {
+                var ports = JSON.parse(document.getElementById('ports-data').textContent);
+                var labels = ports.map(function(p) { return p.port + ' (' + p.service + ')'; });
+                var values = ports.map(function() { return 1; });
+                var colorMap = { risk: 'rgba(255,86,120,0.75)', attention: 'rgba(255,199,107,0.75)', safe: 'rgba(70,252,183,0.75)' };
+                var colors = ports.map(function(p) { return colorMap[p.tone] || 'rgba(79,230,196,0.75)'; });
 
-                new Chart(ctx, {
+                new Chart(document.getElementById('portsChart').getContext('2d'), {
                     type: 'bar',
                     data: {
                         labels: labels,
                         datasets: [{
                             label: 'Portas Abertas',
                             data: values,
-                            backgroundColor: 'rgba(102, 126, 234, 0.7)',
-                            borderColor: 'rgba(102, 126, 234, 1)',
+                            backgroundColor: colors,
+                            borderColor: colors.map(function(c) { return c.replace('0.75','1'); }),
                             borderWidth: 2,
                             borderRadius: 6
                         }]
                     },
                     options: {
-                        plugins: {
-                            legend: { display: true, position: 'top' }
-                        },
-                        scales: {
-                            y: { 
-                                beginAtZero: true, 
-                                ticks: { stepSize: 1 },
-                                max: Math.max(...values) + 1
-                            }
-                        }
+                        plugins: { legend: { display: true, position: 'top' } },
+                        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 }, max: 2 } }
                     }
                 });
-            </script>
-        </div>
-        {% endif %}
+            })();
+        </script>
+    </div>
+    {% endif %}
 
-        <section class="history-section">
-            <div class="history-header">
-                <h2>Histórico de Scans</h2>
+    <!-- Histórico -->
+    <section class="history-section">
+        <div class="history-header">
+            <h2>Histórico de Scans</h2>
+            <div class="history-actions">
+                <input type="text" class="history-search" id="historySearch"
+                       placeholder="🔍 Buscar por alvo ou data..."
+                       oninput="filterHistory()">
+                <button type="button" class="btn-export" onclick="exportHistory('csv')">⬇ CSV</button>
+                <button type="button" class="btn-export" onclick="exportHistory('json')">⬇ JSON</button>
                 <form method="POST" action="/history/clear" class="clear-history-form">
-                    <button class="clear-history-btn" type="submit">Limpar histórico</button>
+                    <button class="clear-history-btn" type="submit">🗑 Limpar</button>
                 </form>
             </div>
-            {% if request.args.get('cleared') == '1' %}
-            <div class="success">Histórico limpo com sucesso.</div>
-            {% endif %}
-            {% if history %}
-            <table>
-                <tr>
-                    <th>Data/Hora</th>
-                    <th>Alvo</th>
-                    <th>Portas abertas</th>
-                </tr>
-                {% for item in history %}
-                <tr>
-                    <td>{{ item.timestamp }}</td>
-                    <td>{{ item.target }}</td>
-                    <td>{{ item.open_ports }}</td>
-                </tr>
-                {% endfor %}
+        </div>
+
+        {% if request.args.get('cleared') == '1' %}
+        <div class="success">Histórico limpo com sucesso.</div>
+        {% endif %}
+
+        {% if history %}
+        <div class="table-wrapper">
+            <table id="historyTable">
+                <thead>
+                    <tr>
+                        <th>Data/Hora</th>
+                        <th>Alvo</th>
+                        <th>Portas abertas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in history %}
+                    <tr data-search="{{ item.timestamp }} {{ item.target }}">
+                        <td>{{ item.timestamp }}</td>
+                        <td>{{ item.target }}</td>
+                        <td>{{ item.open_ports }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
             </table>
-            {% else %}
-            <div class="history-empty">Nenhum scan registrado ainda.</div>
-            {% endif %}
-        </section>
-    </div>
+        </div>
+        {% else %}
+        <div class="history-empty">Nenhum scan registrado ainda.</div>
+        {% endif %}
+    </section>
+</div>
+
+<script>
+    function setQuickPort(port) {
+        var portField = document.getElementById('port_range');
+        var fastField = document.getElementById('fast');
+        var ipField = document.getElementById('ip');
+
+        if (portField) {
+            portField.value = port + '-' + port;
+        }
+        if (fastField) {
+            fastField.checked = false;
+        }
+        if (ipField) {
+            ipField.focus();
+        }
+    }
+
+    /* === CARREGAMENTO === */
+    var loadingSteps = [
+        'Resolvendo hostname e conectando...',
+        'Varrendo portas...',
+        'Aguarde, isso pode demorar um pouco...'
+    ];
+
+    document.getElementById('scanForm').addEventListener('submit', function (e) {
+        var portRange = document.getElementById('port_range').value.trim();
+        if (portRange) {
+            var parts = portRange.split('-');
+            if (parts.length !== 2 || isNaN(parts[0]) || isNaN(parts[1]) ||
+                +parts[0] < 1 || +parts[1] > 65535 || +parts[0] > +parts[1]) {
+                e.preventDefault();
+                alert('Intervalo inválido. Use o formato inicio-fim (ex: 20-80).');
+                return;
+            }
+        }
+
+        var overlay  = document.getElementById('loadingOverlay');
+        var btn      = document.getElementById('scanBtn');
+        var spinner  = document.getElementById('btnSpinner');
+        var btnText  = document.getElementById('btnText');
+        var stepEl   = document.getElementById('loadingStep');
+
+        overlay.classList.add('active');
+        btn.disabled = true;
+        spinner.style.display = 'block';
+        btnText.textContent = 'Escaneando...';
+
+        var i = 0;
+        setInterval(function () {
+            i = (i + 1) % loadingSteps.length;
+            stepEl.textContent = loadingSteps[i];
+        }, 2500);
+    });
+
+    /* === FILTROS DE RESULTADO === */
+    function filterResults() {
+        var portVal    = (document.getElementById('filterPort')    ? document.getElementById('filterPort').value    : '').trim().toLowerCase();
+        var serviceVal = (document.getElementById('filterService') ? document.getElementById('filterService').value : '').trim().toLowerCase();
+        var riskVal    = (document.getElementById('filterRisk')    ? document.getElementById('filterRisk').value    : '').toLowerCase();
+
+        var rows    = document.querySelectorAll('#resultsBody tr');
+        var visible = 0;
+
+        rows.forEach(function (row) {
+            var port    = (row.dataset.port    || '').toLowerCase();
+            var service = (row.dataset.service || '').toLowerCase();
+            var tone    = (row.dataset.tone    || '').toLowerCase();
+
+            var match = (!portVal    || port.includes(portVal))       &&
+                        (!serviceVal || service.includes(serviceVal)) &&
+                        (!riskVal    || tone === riskVal);
+
+            row.classList.toggle('hidden-row', !match);
+            if (match) visible++;
+        });
+
+        var countEl = document.getElementById('filterCount');
+        if (countEl) {
+            countEl.textContent = (visible < rows.length) ? visible + ' de ' + rows.length + ' porta(s)' : '';
+        }
+
+        var noMatch = document.getElementById('results-no-match');
+        if (noMatch) noMatch.style.display = (visible === 0) ? 'block' : 'none';
+    }
+
+    function clearFilters() {
+        ['filterPort', 'filterService', 'filterRisk'].forEach(function (id) {
+            var el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+        filterResults();
+    }
+
+    /* === BUSCA NO HISTÓRICO === */
+    function filterHistory() {
+        var query = (document.getElementById('historySearch') ? document.getElementById('historySearch').value : '').trim().toLowerCase();
+        document.querySelectorAll('#historyTable tbody tr').forEach(function (row) {
+            var text = (row.dataset.search || row.textContent).toLowerCase();
+            row.classList.toggle('hidden-row', query.length > 0 && !text.includes(query));
+        });
+    }
+
+    /* === EXPORTAR HISTÓRICO === */
+    function exportHistory(format) {
+        var rows = document.querySelectorAll('#historyTable tbody tr:not(.hidden-row)');
+        if (!rows.length) { alert('Nenhum registro para exportar.'); return; }
+
+        var content, mime, ext;
+
+        if (format === 'csv') {
+            var lines = ['Data/Hora,Alvo,Portas abertas'];
+            rows.forEach(function (row) {
+                var cells = row.querySelectorAll('td');
+                var line = Array.from(cells).map(function (td) {
+                    return '"' + td.textContent.trim().replace(/"/g, '""') + '"';
+                }).join(',');
+                lines.push(line);
+            });
+            content = lines.join('\n');
+            mime = 'text/csv;charset=utf-8;';
+            ext  = 'csv';
+        } else {
+            var data = [];
+            rows.forEach(function (row) {
+                var cells = row.querySelectorAll('td');
+                data.push({
+                    timestamp:  cells[0] ? cells[0].textContent.trim() : '',
+                    target:     cells[1] ? cells[1].textContent.trim() : '',
+                    open_ports: cells[2] ? cells[2].textContent.trim() : ''
+                });
+            });
+            content = JSON.stringify(data, null, 2);
+            mime = 'application/json';
+            ext  = 'json';
+        }
+
+        var blob = new Blob([content], { type: mime });
+        var url  = URL.createObjectURL(blob);
+        var a    = document.createElement('a');
+        a.href     = url;
+        a.download = 'historico_scans.' + ext;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+</script>
 </body>
 </html>
 
